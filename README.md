@@ -27,15 +27,35 @@ Create a backup of the original .lua file, this way you revert back to it in cas
 <br />
 <br />
 sudo snort -c /usr/local/etc/snort/snort.lua --plugin-path /usr/local/etc/so_rules/ -i ens33 -A alert_fast -s 65535 -k none -R /usr/local/etc/rules/local.rules:  <br/>
+Note: "-i" specifies the interface name to monitor, yours will be different. Run "ip a" or "ifconfig" to your interface name <br/>
 <img src="https://i.imgur.com/Wzrw7K5.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
 <br />
  
 <br />
-If you don't have any errors and the test is successful you will see that monitring started as well : <br/>
+If you don't have any errors in your .lua or .rules files, the test is successful and you will see Snort version and that monitring started as well : <br/>
 <img src="https://i.imgur.com/dix6wJd.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
 <br />
 <br />
-Confirm your selection:  <br/>
+
+<h2>3 ways I found to add additional rule files: </h2>
+
+
+<p>1) go to the snort.lua file
+at line 170 (the "ips" part, don't forget the 4 spaces before "include" and the comma after include
+    include = "/path/to/rulesfile1.rules",
+    include = "/path/to/rulesfile2.rules",</p>
+
+    
+<p>2) Within the command itself by specifying multiple rules files using the "-R" option </p><br/>
+ sudo snort -c /usr/local/etc/snort/snort.lua --plugin-path /usr/local/etc/so_rules/ -i ens33 -A alert_fast -R /usr/local/etc/rules/rulefile1.rules -R /usr/local/etc/rules/rulefile2.rules -R /usr/local/etc/rules/rulefile3.rules -s 65535 -k none</p>
+
+<p>3) go to the pulledpork3.conf
+Search for: 
+# Local Rules files
+# Specify local rules files, comma-separated
+local_rules = /usr/local/etc/rules/local.rules, /usr/local/etc/rules/local2.rules, /usr/local/etc/rules/local3.rules </p>
+ 
+ 
 <img src="https://i.imgur.com/cdFHBiU.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
 <br />
 <br />
