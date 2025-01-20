@@ -2,7 +2,11 @@
 
 <p>Follow this official guide from Snort's website</p>
 <b></b>
-<a href="https://www.snort.org/documents/snort-3-1-18-0-on-ubuntu-18-20">Snort 3.1.18.0 on Ubuntu 18 & 20</a>
+<a href="https://www.snort.org/documents/snort-3-1-18-0-on-ubuntu-18-20">Snort 3.1.18.0 on Ubuntu 18 & 20 Installation Guide</a>
+<br />
+<a href="https://docs.snort.org/welcome">Snort 3.0 Rule Writing Guide</a>
+<br />
+<a href="https://snort-org-site.s3.amazonaws.com/production/release_files/files/000/038/976/original/snort_user.html?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAU7AK5ITMMOXGB2W5%2F20250120%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250120T164922Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=464150f1085b259780f433d821100101aa6522158dfdc989e9a6f42918c6b41f">Snort 3.0 Manual</a>
 
 <h2>Description</h2>
 
