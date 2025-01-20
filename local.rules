@@ -41,14 +41,22 @@ reject icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Windows Traceroute detected
 # detecting large icmp requests through the dszie (data size)
 drop icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Large ICMP packet, possible DoS"; classtype:attempted-dos; dsize:1024<>65535; sid:1000015; rev:1;)
 
+# detecting icmp tunneling (through length (dsize in snort terms) and content)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Possible ICMP tunnel"; classtype:icmp-event; dsize:>63; sid: 1000016; rev:1;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Payload contains Command"; classtype:icmp-event; content:"net user"; sid: 1000017; rev:1;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Payload contains Command"; classtype:icmp-event; content:"netstat"; sid: 1000018; rev:1;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Payload contains Command"; classtype:icmp-event; content:"wmic"; sid: 1000019; rev:1;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Payload contains Command"; classtype:icmp-event; content:"arp -a"; sid: 1000020; rev:1;)
+
+
 # rejecting ftp traffic, afrer 10 failed attempts in 20 seconds
-reject ftp $EXTERNAL_NET any -> $HOME_NET 21 (msg:"FTP brute force detected"; classtype:unsuccessful-user; content:"USER"; detection_filter:track by_src, count 10, seconds 20; sid:1000016>
+reject ftp $EXTERNAL_NET any -> $HOME_NET 21 (msg:"FTP brute force detected"; classtype:unsuccessful-user; content:"USER"; detection_filter:track by_src, count 10, seconds 20; sid:1000021>
 
 # detecting external web server access 
-react http $EXTERNAL_NET any -> 10.0.0.100 80 ( msg:"Unauthorized web access attempt."; http_method; content:"GET"; sid:1000017; rev:1; )
+react http $EXTERNAL_NET any -> 10.0.0.100 80 ( msg:"Unauthorized web access attempt."; http_method; content:"GET"; sid:1000022; rev:1; )
 
 # detecting social media platform, Twitter, usage
-react tcp $HOME_NET any -> any any ( msg:"Acceptable use policy violation"; appids:"Twitter"; sid:1000018; rev:1; )
+react tcp $HOME_NET any -> any any ( msg:"Acceptable use policy violation"; appids:"Twitter"; sid:1000023; rev:1; )
 
 
 
