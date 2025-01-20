@@ -71,7 +71,7 @@ local_rules = /usr/local/etc/rules/local.rules, /usr/local/etc/rules/local2.rule
  
 
 <br />
-The documentation, p. 24, specifies an incorrect location for the snort.lua file, <b>/usr/local/lib/</b>,  for the odt folder of OpenAppID.   <br/>
+The documentation, p. 24, specifies an incorrect location for the OpenAPPID in the snort.lua file, <b>/usr/local/lib/</b>,  for the odt folder of OpenAppID.   <br/>
 <p>The correct location is <b>'/usr/local/cisco/apps'</b>
 <br>You will need to create the folders "cisco" & "apps"</br>
 </p>
