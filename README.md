@@ -9,6 +9,9 @@
 Project consists of a few setup tips for Snort 3 to and writing some detection rules since there isn't much guidance out there apart from some very basic examples.
 <br />
 
+I included the .lua file as well as the .rules file as it's a functional configuration
+<br/>
+
 <p>Note that there's a mistake in the documentation when setting up OpenAPPID. It's where you save the ODT file and hence, changing the path you specify for in the snort.lua file</p>
 
 <h2>Setup is on Ubuntu</h2>
