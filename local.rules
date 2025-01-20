@@ -1,7 +1,10 @@
 # You can see all supported protocols in the snort.lua file
 
 alert http $HOME_NET any -> $EXTERNAL_NET [80,8080] ( msg:"Malware GET Request"; flow:to_server,established; http_method; content:"GET"; raw_data; content:"|48 6f 73 74 3a 20 65|"; sid:1000001>
+# detecting malicious dns query to malicious domain, dnscat
 alert dns any any -> any any (msg:"dnscat"; content:"dnscat"; sid:1000002; rev:1;)
+
+# detecting directory traversal
 alert http any any -> any any (msg:"Directory Traversal Detected"; http_method; content:"GET"; http_uri; content:"\.\.\/\.\.\/\.\.\/\.\.\/\.\."; sid:1000003; rev:1;)
 
 #detecting dns query containing weird paypal
@@ -25,11 +28,12 @@ drop tcp $EXTERNAL_NET any -> $HOME_NET 23 (msg:"Inbound Telnet traffic detected
 # using snort as IPS (inline mode), I am rejecting external RDP connection attempts
 reject tcp $EXTERNAL_NET any -> $HOME_NET 3389 (msg:"Inbound RDP traffic detected."; classtype:suspicious-login; sid:1000010; rev:1;)
 
-
+# rejecting the VSFTPD backdoor vulniberility by rejecting the ":)" in the USER entry
 reject tcp $EXTERNAL_NET any -> $HOME_NET 21 (msg:"Attempted VSFTPD backdoor detected."; content:":)"; classtype:attempted-admin; sid:1000011; rev:1;)
 
 # detecting Linux traceroute
 alert udp any any -> any any (msg:"Linux Traceroute detected."; ttl:<3; classtype:network-scan; sid:1000012; rev:1;)
+
 # detecting Windows traceroute
 drop icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Windows Traceroute detected"; ttl:<3;classtype:network-scan; sid:1000013; rev:1;)
 reject icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Windows Traceroute detected"; ttl:<3;classtype:network-scan; sid:1000014; rev:1;)
@@ -37,12 +41,15 @@ reject icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Windows Traceroute detected
 # detecting large icmp requests through the dszie (data size)
 drop icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Large ICMP packet, possible DoS"; classtype:attempted-dos; dsize:1024<>65535; sid:1000015; rev:1;)
 
-reject ftp $EXTERNAL_NET any -> $HOME_NET 21 (msg:"FTP brute force detected"; classtype:unsuccessful-user; content:"USER"; detection_filter:track by_src, count 4, seconds 60; sid:1000016>
+# rejecting ftp traffic, afrer 10 failed attempts in 20 seconds
+reject ftp $EXTERNAL_NET any -> $HOME_NET 21 (msg:"FTP brute force detected"; classtype:unsuccessful-user; content:"USER"; detection_filter:track by_src, count 10, seconds 20; sid:1000016>
 
+# detecting external web server access 
 react http $EXTERNAL_NET any -> 10.0.0.100 80 ( msg:"Unauthorized web access attempt."; http_method; content:"GET"; sid:1000017; rev:1; )
+
+# detecting social media platform, Twitter, usage
 react tcp $HOME_NET any -> any any ( msg:"Acceptable use policy violation"; appids:"Twitter"; sid:1000018; rev:1; )
-#alert tcp any any -> any any (msg:"HTTP GET Request"; content:"GET"; sid:1000019; rev:1; )
-#block tcp any any -> any any ( msg:"http detected"; content:"GET", nocase; sid:1000020; rev:1; )
+
 
 
 
