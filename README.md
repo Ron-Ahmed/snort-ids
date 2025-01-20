@@ -6,27 +6,31 @@
 
 <h2>Description</h2>
 
-Project consists of a few setup tips for Snort 3 to and writing some detection rules since there isn't much guidance out there apart from some very basic examples.
-<br />
+<h3>Project consists of:</h3>
+<ol>
+ <li>Best practices installation notes</li>
+ <li>3 Ways I found to run additional rule files</li>
+ <li>Writing more advanced rules since most of the material online is so basic or based on Snort 2</li>
+</ol>
 
-I included the .lua and .rules file as it's a functional configuration that works with Pullpork plugin
-<br/>
+<p><u>Important to note that</u> there's syntax difference between Snort 2 and Snort 3 rules when it comes to "," or ";" placement.</p>
+<p>I included the .lua and .rules file as it's a functional configuration that works with Pullpork plugin</p>
+
 
 <p>Note that there's a mistake in the documentation when setting up OpenAPPID. It's where you save the ODT file and hence, changing the path you specify for in the snort.lua file</p>
 
 <h2>Setup is on Ubuntu</h2>
 
-<p>I set it up on Ubuntu, since not all distros have the same package list. You will run into many errors midway trying to set Snort 3 up on Kali if you are doing a manual build</p>
+<p>I set up Snort 3 on Ubuntu, since not all distros have the same package list. You will run into many errors midway trying to set Snort 3 up on Kali if you are doing a manual build</p>
 
-
-<h2>Program walk-through:</h2>
+<h2>Best Practices Notes:</h2>
 
 <p align="center">
-Create a backup of the original .lua file, this way you revert back to it in case your break the configuration with a change: <br/>
+Create a backup of the original .lua file and the .rules file, this way you revert back to originals or pervious verions in case your break the configuration with a change: <br/>
 <img src="https://i.imgur.com/aiODyob.png" height="80%" width="80%" alt="configuration file backup"/>
 <br />
 <br />
-sudo snort -c /usr/local/etc/snort/snort.lua --plugin-path /usr/local/etc/so_rules/ -i ens33 -A alert_fast -s 65535 -k none -R /usr/local/etc/rules/local.rules:  <br/>
+sudo snort -c /usr/local/etc/snort/snort.lua --plugin-path /usr/local/etc/so_rules/ -i ens33 -A alert_fast -s 65535 -k none -d -R /usr/local/etc/rules/local.rules:  <br/>
 Note: "-i" specifies the interface name to monitor, yours will be different. Run "ip a" or "ifconfig" to your interface name <br/>
 <img src="https://i.imgur.com/Wzrw7K5.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
 <br />
