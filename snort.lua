@@ -199,7 +199,7 @@ ips =
     -- note that rules files can include other rules files
     -- (see also related path vars at the top of snort_defaults.lua)
     include = RULE_PATH .. "/pulledpork.rules",
-    include = "/usr/local/etc/rules/local2.rules",
+    include = "/usr/local/etc/rules/local.rules",
     variables = default_variables
 }
 
