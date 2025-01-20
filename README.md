@@ -2,7 +2,7 @@
 
 <p>Follow this official guide from Snort's website</p>
 <b></b>
-[Snort 3.1.18.0 on Ubuntu 18 & 20](https://www.snort.org/documents/snort-3-1-18-0-on-ubuntu-18-20)
+<a href="https://www.snort.org/documents/snort-3-1-18-0-on-ubuntu-18-20">Snort 3.1.18.0 on Ubuntu 18 & 20</a>
 
 <h2>Description</h2>
 
