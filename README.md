@@ -9,7 +9,7 @@
 Project consists of a few setup tips for Snort 3 to and writing some detection rules since there isn't much guidance out there apart from some very basic examples.
 <br />
 
-I included the .lua file as well as the .rules file as it's a functional configuration
+I included the .lua and .rules file as it's a functional configuration that works with Pullpork plugin
 <br/>
 
 <p>Note that there's a mistake in the documentation when setting up OpenAPPID. It's where you save the ODT file and hence, changing the path you specify for in the snort.lua file</p>
@@ -22,16 +22,17 @@ I included the .lua file as well as the .rules file as it's a functional configu
 <h2>Program walk-through:</h2>
 
 <p align="center">
-Launch the utility: <br/>
-<img src="https://i.imgur.com/62TgaWL.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+Create a backup of the original .lua file, this way you revert back to it in case your break the configuration with a change: <br/>
+<img src="https://i.imgur.com/aiODyob.png" height="80%" width="80%" alt="configuration file backup"/>
 <br />
 <br />
-Select the disk:  <br/>
-<img src="https://i.imgur.com/tcTyMUE.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+sudo snort -c /usr/local/etc/snort/snort.lua --plugin-path /usr/local/etc/so_rules/ -i ens33 -A alert_fast -s 65535 -k none -R /usr/local/etc/rules/local.rules:  <br/>
+<img src="https://i.imgur.com/Wzrw7K5.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
 <br />
+ 
 <br />
-Enter the number of passes: <br/>
-<img src="https://i.imgur.com/nCIbXbg.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+If you don't have any errors and the test is successful you will see that monitring started as well : <br/>
+<img src="https://i.imgur.com/dix6wJd.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
 <br />
 <br />
 Confirm your selection:  <br/>
