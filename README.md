@@ -8,7 +8,7 @@
 
 <h3>Project consists of:</h3>
 <ol>
- <li>Best practices installation notes</li>
+ <li>Best practices installation notes or administration notes where I noticed the documentation lacking</li>
  <li>3 Ways I found to run additional rule files</li>
  <li>Writing more advanced rules since most of the material online is so basic or based on Snort 2</li>
 </ol>
@@ -26,10 +26,11 @@
 <h2>Best Practices Notes:</h2>
 
 <p align="center">
-Create a backup of the original .lua file and the .rules file, this way you revert back to originals or pervious verions in case your break the configuration with a change: <br/>
+<b>1.</b>Create a backup of the original .lua file and the .rules file, this way you revert back to originals or pervious verions in case your break the configuration with a change: <br/>
 <img src="https://i.imgur.com/aiODyob.png" height="80%" width="80%" alt="configuration file backup"/>
 <br />
 <br />
+<b>2.Test configuration and rules after every change</b></br>
 sudo snort -c /usr/local/etc/snort/snort.lua --plugin-path /usr/local/etc/so_rules/ -i ens33 -A alert_fast -s 65535 -k none -d -R /usr/local/etc/rules/local.rules:  <br/>
 Note: "-i" specifies the interface name to monitor, yours will be different. Run "ip a" or "ifconfig" to your interface name <br/>
 <img src="https://i.imgur.com/Wzrw7K5.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
@@ -43,37 +44,41 @@ If you don't have any errors in your .lua or .rules files, the test is successfu
 
 <h2>3 ways I found to add additional rule files: </h2>
 
-
-<p>1) go to the snort.lua file
+<ol>
+<li>
+ go to the snort.lua file
 at line 170 (the "ips" part, don't forget the 4 spaces before "include" and the comma after include
     include = "/path/to/rulesfile1.rules",
-    include = "/path/to/rulesfile2.rules",</p>
-
-    
-<p>2) Within the command itself by specifying multiple rules files using the "-R" option </p><br/>
- sudo snort -c /usr/local/etc/snort/snort.lua --plugin-path /usr/local/etc/so_rules/ -i ens33 -A alert_fast -R /usr/local/etc/rules/rulefile1.rules -R /usr/local/etc/rules/rulefile2.rules -R /usr/local/etc/rules/rulefile3.rules -s 65535 -k none</p>
-
-<p>3) go to the pulledpork3.conf
+    include = "/path/to/rulesfile2.rules",</li>
+<li>Within the command itself by specifying multiple rules files using the "-R" option<br/>
+ sudo snort -c /usr/local/etc/snort/snort.lua --plugin-path /usr/local/etc/so_rules/ -i ens33 -A alert_fast -R /usr/local/etc/rules/rulefile1.rules -R /usr/local/etc/rules/rulefile2.rules -R /usr/local/etc/rules/rulefile3.rules -s 65535 -k none</li>
+<li>go to the pulledpork3.conf
 Search for: 
 # Local Rules files
 # Specify local rules files, comma-separated
-local_rules = /usr/local/etc/rules/local.rules, /usr/local/etc/rules/local2.rules, /usr/local/etc/rules/local3.rules </p>
+local_rules = /usr/local/etc/rules/local.rules, /usr/local/etc/rules/local2.rules, /usr/local/etc/rules/local3.rules</li>
+</ol>
+
+    
+
+
+
  
  
-<img src="https://i.imgur.com/cdFHBiU.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+
 <br />
-<br />
-Wait for process to complete (may take some time):  <br/>
-<img src="https://i.imgur.com/JL945Ga.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-<br />
-<br />
-Sanitization complete:  <br/>
-<img src="https://i.imgur.com/K71yaM2.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-<br />
-<br />
-Observe the wiped disk:  <br/>
-<img src="https://i.imgur.com/AeZkvFQ.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+The documentation, p. 24, specifies an incorrect location for the snort.lua file, <b>/usr/local/lib/</b>,  for the odt folder of OpenAppID.   <br/>
+<p>The correct location is <b>'/usr/local/cisco/apps'</b>
+<br>You will need to create the folders "cisco" & "apps"</br>
 </p>
+
+<br />
+Rule writing depends on looking at captured PCAPs and writing rules to match them<br/>
+
+<br />
+<br />
+Snort 3.0 Rule Writing Documenation is a great resource to refer to. I created rules based on its guidance and analyzing some malicious pcaps<br/>
+
 
 <!--
  ```diff
