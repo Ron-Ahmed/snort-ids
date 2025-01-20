@@ -1,1 +1,9 @@
+Make sure to set the $HOME_NET to the correct network, otherwise you will get varying results when reading PCAPs and no results in Live capture
 
+To create signatures, used Wireshark and trace the tcp/udp/http to match content with
+
+The most common mistakes are usually:
+1. forgetting/misplacing ";" or ":" (ends up giving errors and seeing correctly written rules error out as well)
+2. typos content you're matching with or (ends up not detecting anything)
+3. to get consistent results with http content matching, always use http specific options like: http_method, http_uri, http_header, http_raw_header, ... etc.
+4. try to specify the protocol after the rule action for quicket results 
