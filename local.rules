@@ -1,28 +1,48 @@
 # You can see all supported protocols in the snort.lua file
-## leveraging App Detection to detect traffic to facebook.com
-#alert http $HOME_NET any -> $EXTERNAL_NET [80,8080] ( msg:"Malware GET Request"; flow:to_server,established; http_method; content:"GET"; content:"48 6f 73 74 3a 20 65"; sid:100006>
-alert dns any any -> any any (msg:"dnscat"; content:"dnscat"; sid:1000061; rev:1;)
-alert http any any -> any any (msg:"Directory Traversal Detected"; http_method; content:"GET"; http_uri; content:"\.\.\/\.\.\/\.\.\/\.\.\/\.\."; sid:1000065; rev:1;)
-alert udp any any -> any any (msg:"strange paypal"; content:"paypal!com4"; sid:1000063; rev:1; )
-alert tcp $HOME_NET any -> any 80 (msg:"example.com detected"; http_method; content:"GET"; content:"example.com"; sid:1000062; rev:1;)
-alert tcp any any -> any any ( msg:"Facebook Detected"; appids:"Facebook"; sid:10000010; rev:1;)
-#alert tcp any any -> any any (msg:"Too much noise"; appids: Facebook; sid:1000020; rev:1)
-# using detection_filter to tune the number of alerts for each detection (in this example: I am creating a detection for ICMP traffic, where the number of pings is 10 in a span of 20 seconds instead of getting a alert for every detection
-alert icmp $HOME_NET any -> any any ( msg:"ICMP Traffic Detected"; detection_filter:track by_src, count 10, seconds 20; sid:1000068; metadata:policy security-ips alert; )
-alert tcp $EXTERNAL_NET any -> $HOME_NET 22 (msg:"Inbound SSH traffic detected."; classtype:suspicious-login; sid: 1000002; rev:1;)
-drop tcp $EXTERNAL_NET any -> $HOME_NET 23 (msg:"Inbound Telnet traffic detected."; classtype:suspicious-login; priority:1; sid:1000003; rev:1;)
-reject tcp $EXTERNAL_NET any -> $HOME_NET 3389 (msg:"Inbound RDP traffic detected."; classtype:suspicious-login; sid:1000004; rev:1;)
-reject tcp $EXTERNAL_NET any -> $HOME_NET 21 (msg:"Attempted VSFTPD backdoor detected."; content:":)"; classtype:attempted-admin; sid:1000005; rev:1;)
-alert udp any any -> any any (msg:"Linux Traceroute detected."; ttl:<3; classtype:network-scan; sid:1000006; rev:1;)
-#drop icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Windows Traceroute detected"; ttl:<3;classtype:network-scan; sid:1000007; rev:1;)
-reject icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Windows Traceroute detected"; ttl:<3;classtype:network-scan; sid:1000007; rev:1;)
-drop icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Large ICMP packet, possible DoS"; classtype:attempted-dos; dsize:1024<>65535; sid:10000008; rev:1;)
-reject ftp $EXTERNAL_NET any -> $HOME_NET 21 (msg:"FTP brute force detected"; classtype:unsuccessful-user; content:"USER"; detection_filter:track by_src, count 4, seconds 60; sid:1>
 
-react http $EXTERNAL_NET any -> 10.0.0.100 80 ( msg:"Unauthorized web access attempt."; http_method; content:"GET"; sid:1000015; rev:1; )
-react tcp $HOME_NET any -> any any ( msg:"Acceptable use policy violation"; appids:"Twitter"; sid:1000016; rev:1; )
-#alert tcp any any -> any any (msg:"HTTP GET Request"; content:"GET"; sid:1000020; rev:1; )
-#block tcp any any -> any any ( msg:"http detected"; content:"GET", nocase; sid:1000050; rev:1; )
+alert http $HOME_NET any -> $EXTERNAL_NET [80,8080] ( msg:"Malware GET Request"; flow:to_server,established; http_method; content:"GET"; raw_data; content:"|48 6f 73 74 3a 20 65|"; sid:1000001>
+alert dns any any -> any any (msg:"dnscat"; content:"dnscat"; sid:1000002; rev:1;)
+alert http any any -> any any (msg:"Directory Traversal Detected"; http_method; content:"GET"; http_uri; content:"\.\.\/\.\.\/\.\.\/\.\.\/\.\."; sid:1000003; rev:1;)
+
+#detecting dns query containing weird paypal
+alert udp any any -> any any (msg:"strange paypal"; content:"paypal!com4"; sid:1000004; rev:1; )
+
+#detecting traffic requesting example.com
+alert tcp $HOME_NET any -> any 80 (msg:"example.com detected"; http_method; content:"GET"; http_uri; content:"example.com"; sid:1000005; rev:1;)
+
+## leveraging App Detection to detect traffic to facebook.com
+alert tcp any any -> any any ( msg:"Facebook Detected"; appids:"Facebook"; sid:10000006; rev:1;)
+
+# using detection_filter to tune the number of alerts for each detection (in this example: I am creating a detection for ICMP traffic, where the number of pings is 10 in a span of 20 seconds instead of getting a alert for every detection
+alert icmp $HOME_NET any -> any any ( msg:"ICMP Traffic Detected"; detection_filter:track by_src, count 10, seconds 20; sid:1000007; metadata:policy security-ips alert; )
+
+# detecting suspicious external ssh connections
+alert tcp $EXTERNAL_NET any -> $HOME_NET 22 (msg:"Inbound SSH traffic detected."; classtype:suspicious-login; sid: 1000008; rev:1;)
+
+# using snort as IPS (inline mode), I am dropping external telnet connection attempts
+drop tcp $EXTERNAL_NET any -> $HOME_NET 23 (msg:"Inbound Telnet traffic detected."; classtype:suspicious-login; priority:1; sid:1000009; rev:1;)
+
+# using snort as IPS (inline mode), I am rejecting external RDP connection attempts
+reject tcp $EXTERNAL_NET any -> $HOME_NET 3389 (msg:"Inbound RDP traffic detected."; classtype:suspicious-login; sid:1000010; rev:1;)
+
+
+reject tcp $EXTERNAL_NET any -> $HOME_NET 21 (msg:"Attempted VSFTPD backdoor detected."; content:":)"; classtype:attempted-admin; sid:1000011; rev:1;)
+
+# detecting Linux traceroute
+alert udp any any -> any any (msg:"Linux Traceroute detected."; ttl:<3; classtype:network-scan; sid:1000012; rev:1;)
+# detecting Windows traceroute
+drop icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Windows Traceroute detected"; ttl:<3;classtype:network-scan; sid:1000013; rev:1;)
+reject icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Windows Traceroute detected"; ttl:<3;classtype:network-scan; sid:1000014; rev:1;)
+
+# detecting large icmp requests through the dszie (data size)
+drop icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Large ICMP packet, possible DoS"; classtype:attempted-dos; dsize:1024<>65535; sid:1000015; rev:1;)
+
+reject ftp $EXTERNAL_NET any -> $HOME_NET 21 (msg:"FTP brute force detected"; classtype:unsuccessful-user; content:"USER"; detection_filter:track by_src, count 4, seconds 60; sid:1000016>
+
+react http $EXTERNAL_NET any -> 10.0.0.100 80 ( msg:"Unauthorized web access attempt."; http_method; content:"GET"; sid:1000017; rev:1; )
+react tcp $HOME_NET any -> any any ( msg:"Acceptable use policy violation"; appids:"Twitter"; sid:1000018; rev:1; )
+#alert tcp any any -> any any (msg:"HTTP GET Request"; content:"GET"; sid:1000019; rev:1; )
+#block tcp any any -> any any ( msg:"http detected"; content:"GET", nocase; sid:1000020; rev:1; )
 
 
 
