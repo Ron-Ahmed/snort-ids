@@ -19,7 +19,7 @@ alert tcp any any -> any any ( msg:"Facebook Detected"; appids:"Facebook"; sid:1
 # using detection_filter to tune the number of alerts for each detection (in this example: I am creating a detection for ICMP traffic, where the number of pings is 10 in a span of 20 seconds instead of getting a alert for every detection
 alert icmp $HOME_NET any -> any any ( msg:"ICMP Traffic Detected"; detection_filter:track by_src, count 10, seconds 20; sid:1000007; metadata:policy security-ips alert; )
 
-# detecting suspicious external ssh connections
+# detecting suspicious external ssh connections and setting classtype, to see the classification in Alerts for easier readibility
 alert tcp $EXTERNAL_NET any -> $HOME_NET 22 (msg:"Inbound SSH traffic detected."; classtype:suspicious-login; sid: 1000008; rev:1;)
 
 # using snort as IPS (inline mode), I am dropping external telnet connection attempts
