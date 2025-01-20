@@ -22,6 +22,6 @@ react http $EXTERNAL_NET any -> 10.0.0.100 80 ( msg:"Unauthorized web access att
 react tcp $HOME_NET any -> any any ( msg:"Acceptable use policy violation"; appids:"Twitter"; sid:1000016; rev:1; )
 #alert tcp any any -> any any (msg:"HTTP GET Request"; content:"GET"; sid:1000020; rev:1; )
 #block tcp any any -> any any ( msg:"http detected"; content:"GET", nocase; sid:1000050; rev:1; )
-#alert tcp $HOME_NET any -> any [80,443] (msg:"Blocking HTTP GET facebook"; content:"example.com"; sid:1000050; )
+
 
 
