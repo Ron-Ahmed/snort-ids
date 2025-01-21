@@ -1,4 +1,5 @@
 # You can see all supported protocols in the snort.lua file
+# A total of 31 rules
 
 alert http $HOME_NET any -> $EXTERNAL_NET [80,8080] ( msg:"Malware GET Request"; flow:to_server,established; http_method; content:"GET"; raw_data; content:"|48 6f 73 74 3a 20 65|"; sid:1000001>
 # detecting malicious dns query to malicious domain, dnscat
