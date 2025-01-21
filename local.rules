@@ -21,57 +21,57 @@ alert http any any -> any [80,8080] (msg:"Possible Webshell"; http_method; conte
 alert http any any -> any any (msg:"Exploit Signature Detected"; content:"|41 41 41 41|", offset:0, depth:4; content:"| 90 90 90 90|", offset:22, depth:4; sid:1000010; rev:1;)
 
 #detecting dns query containing weird paypal
-alert udp any any -> any any (msg:"strange paypal"; content:"paypal!com4"; sid:1000004; rev:1; )
+alert udp any any -> any any (msg:"strange paypal"; content:"paypal!com4"; sid:1000011; rev:1; )
 
 #detecting traffic requesting example.com
-alert tcp $HOME_NET any -> any 80 (msg:"example.com detected"; http_method; content:"GET"; http_uri; content:"example.com"; sid:1000005; rev:1;)
+alert tcp $HOME_NET any -> any 80 (msg:"example.com detected"; http_method; content:"GET"; http_uri; content:"example.com"; sid:1000012; rev:1;)
 
 ## leveraging App Detection to detect traffic to facebook.com
-alert tcp any any -> any any ( msg:"Facebook Detected"; appids:"Facebook"; sid:10000006; rev:1;)
+alert tcp any any -> any any ( msg:"Facebook Detected"; appids:"Facebook"; sid:1000013; rev:1;)
 
 # using detection_filter to tune the number of alerts for each detection (in this example: I am creating a detection for ICMP traffic, where the number of pings is 10 in a span of 20 seconds instead of getting a alert for every detection
-alert icmp $HOME_NET any -> any any ( msg:"ICMP Traffic Detected"; detection_filter:track by_src, count 10, seconds 20; sid:1000007; metadata:policy security-ips alert; )
+alert icmp $HOME_NET any -> any any ( msg:"ICMP Traffic Detected"; detection_filter:track by_src, count 10, seconds 20; sid:1000014; metadata:policy security-ips alert; )
 
 # detecting suspicious external ssh connections and setting classtype, to see the classification in Alerts for easier readibility
-alert tcp $EXTERNAL_NET any -> $HOME_NET 22 (msg:"Inbound SSH traffic detected."; classtype:suspicious-login; sid: 1000008; rev:1;)
-alert ssh any any -> $HOME_NET !22 (msg:"SSH Policy Violation."; classtype:suspicious-login; content:"openssh", nocase; sid: 1000009; rev:1;)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 22 (msg:"Inbound SSH traffic detected."; classtype:suspicious-login; sid: 1000015; rev:1;)
+alert ssh any any -> $HOME_NET !22 (msg:"SSH Policy Violation."; classtype:suspicious-login; content:"openssh", nocase; sid: 1000016; rev:1;)
 
 
 # using snort as IPS (inline mode), I am dropping external telnet connection attempts
-drop tcp $EXTERNAL_NET any -> $HOME_NET 23 (msg:"Inbound Telnet traffic detected."; classtype:suspicious-login; priority:1; sid:1000009; rev:1;)
+drop tcp $EXTERNAL_NET any -> $HOME_NET 23 (msg:"Inbound Telnet traffic detected."; classtype:suspicious-login; priority:1; sid:1000017; rev:1;)
 
 # using snort as IPS (inline mode), I am rejecting external RDP connection attempts
-reject tcp $EXTERNAL_NET any -> $HOME_NET 3389 (msg:"Inbound RDP traffic detected."; classtype:suspicious-login; sid:1000010; rev:1;)
+reject tcp $EXTERNAL_NET any -> $HOME_NET 3389 (msg:"Inbound RDP traffic detected."; classtype:suspicious-login; sid:1000018; rev:1;)
 
 # rejecting the VSFTPD backdoor vulniberility by rejecting the ":)" in the USER entry
-reject tcp $EXTERNAL_NET any -> $HOME_NET 21 (msg:"Attempted VSFTPD backdoor detected."; content:":)"; classtype:attempted-admin; sid:1000011; rev:1;)
+reject tcp $EXTERNAL_NET any -> $HOME_NET 21 (msg:"Attempted VSFTPD backdoor detected."; content:":)"; classtype:attempted-admin; sid:1000019; rev:1;)
 
 # detecting Linux traceroute
-alert udp any any -> any any (msg:"Linux Traceroute detected."; ttl:<3; classtype:network-scan; sid:1000012; rev:1;)
+alert udp any any -> any any (msg:"Linux Traceroute detected."; ttl:<3; classtype:network-scan; sid:1000020; rev:1;)
 
 # detecting Windows traceroute
-drop icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Windows Traceroute detected"; ttl:<3;classtype:network-scan; sid:1000013; rev:1;)
-reject icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Windows Traceroute detected"; ttl:<3;classtype:network-scan; sid:1000014; rev:1;)
+drop icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Windows Traceroute detected"; ttl:<3;classtype:network-scan; sid:1000021; rev:1;)
+reject icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Windows Traceroute detected"; ttl:<3;classtype:network-scan; sid:1000022; rev:1;)
 
 # detecting large icmp requests through the dszie (data size)
-drop icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Large ICMP packet, possible DoS"; classtype:attempted-dos; dsize:1024<>65535; sid:1000015; rev:1;)
+drop icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Large ICMP packet, possible DoS"; classtype:attempted-dos; dsize:1024<>65535; sid:1000023; rev:1;)
 
 # detecting icmp tunneling (through length (dsize in snort terms) and content)
-alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Possible ICMP tunnel"; classtype:icmp-event; dsize:>63; sid: 1000016; rev:1;)
-alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Payload contains Command"; classtype:icmp-event; content:"net user"; sid: 1000017; rev:1;)
-alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Payload contains Command"; classtype:icmp-event; content:"netstat"; sid: 1000018; rev:1;)
-alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Payload contains Command"; classtype:icmp-event; content:"wmic"; sid: 1000019; rev:1;)
-alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Payload contains Command"; classtype:icmp-event; content:"arp -a"; sid: 1000020; rev:1;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Possible ICMP tunnel"; classtype:icmp-event; dsize:>63; sid:1000024; rev:1;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Payload contains Command"; classtype:icmp-event; content:"net user"; sid:1000025; rev:1;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Payload contains Command"; classtype:icmp-event; content:"netstat"; sid:1000026; rev:1;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Payload contains Command"; classtype:icmp-event; content:"wmic"; sid:1000027; rev:1;)
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP Payload contains Command"; classtype:icmp-event; content:"arp -a"; sid:1000028; rev:1;)
 
 
 # rejecting ftp traffic, afrer 10 failed attempts in 20 seconds
-reject ftp $EXTERNAL_NET any -> $HOME_NET 21 (msg:"FTP brute force detected"; classtype:unsuccessful-user; content:"USER"; detection_filter:track by_src, count 10, seconds 20; sid:1000021>
+reject ftp $EXTERNAL_NET any -> $HOME_NET 21 (msg:"FTP brute force detected"; classtype:unsuccessful-user; content:"USER"; detection_filter:track by_src, count 10, seconds 20; sid:1000029; rev:1;)
 
 # detecting external web server access 
-react http $EXTERNAL_NET any -> 10.0.0.100 80 ( msg:"Unauthorized web access attempt."; http_method; content:"GET"; sid:1000022; rev:1; )
+react http $EXTERNAL_NET any -> 10.0.0.100 80 ( msg:"Unauthorized web access attempt."; http_method; content:"GET"; sid:1000030; rev:1; )
 
 # detecting social media platform, Twitter, usage
-react tcp $HOME_NET any -> any any ( msg:"Acceptable use policy violation"; appids:"Twitter"; sid:1000023; rev:1; )
+react tcp $HOME_NET any -> any any ( msg:"Acceptable use policy violation"; appids:"Twitter"; sid:1000031; rev:1; )
 
 
 
