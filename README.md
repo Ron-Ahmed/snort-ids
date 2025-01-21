@@ -15,6 +15,7 @@
  <li>Best practices installation notes or administration notes where I noticed the documentation lacking</li>
  <li>3 Ways I found to run additional rule files</li>
  <li>Writing more advanced rules since most of the material online is so basic or based on Snort 2</li>
+ <li>Capturing and Reading Traffic with Snort</li>
 </ol>
 
 <p><u>Important to note that</u> there's syntax difference between Snort 2 and Snort 3 rules when it comes to "," or ";" placement.</p>
@@ -35,7 +36,8 @@
 <br />
 <br />
 <b>2.Test configuration and rules after every change</b></br>
-sudo snort -c /usr/local/etc/snort/snort.lua --plugin-path /usr/local/etc/so_rules/ -i ens33 -A alert_fast -s 65535 -k none -d -R /usr/local/etc/rules/local.rules:  <br/>
+</br>You can simply do sudo snort -c /usr/local/etc/snort/snort.lua -R /usr/local/etc/rules/local.rules --plugin-path /usr/local/etc/so_rules/
+</br>sudo snort -c /usr/local/etc/snort/snort.lua --plugin-path /usr/local/etc/so_rules/ -i ens33 -A alert_fast -s 65535 -k none -d -R /usr/local/etc/rules/local.rules  <br/>
 Note: "-i" specifies the interface name to monitor, yours will be different. Run "ip a" or "ifconfig" to your interface name <br/>
 <img src="https://i.imgur.com/Wzrw7K5.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
 <br />
@@ -81,9 +83,23 @@ Rule writing depends on looking at captured PCAPs and writing rules to match the
 
 <br />
 <br />
-Snort 3.0 Rule Writing Documenation is a great resource to refer to. I created rules based on its guidance and analyzing some malicious pcaps<br/>
+Snort 3.0 Rule Writing Documentation is a great resource to refer to. I created rules based on its guidance and analyzing some malicious pcaps<br/>
 
+<h2>Capturing and Reading Traffic with Snort</h2>
 
+<br />Packet capture to pcap with snort on interface for later analysis by using -r pcap name and running it against rules:
+<br /> sudo snort -e -d -L pcap -l /var/log/snort -i ens33
+<ul>
+ <li>-e: To show layer 2 info</li>
+ <li>-d: To show header information</li>
+ <li>-L pcap: to choose logger mode as pcap</li>
+ <li>-l: to choose location to save the pcap, the default is in the current working directroy</li>
+ <li>-i: to specify interface to capture from</li>
+</ul>
+<br />Packet capture with snort on interface:
+<br /> sudo snort -d -L dump -i ens33 -c /usr/local/etc/snort/snort.lua -R /usr/local/etc/rules/local.rules --plugin-path /usr/local/etc/so_rules/ -k none -A alert_fast -s 65535 
+<br />Read captured pcap with Snort:
+<br /> sudo snort -d -L dump -r path/to/pcap -c /usr/local/etc/snort/snort.lua -R /usr/local/etc/rules/local.rules --plugin-path /usr/local/etc/so_rules/ -k none -A alert_fast -s 65535 
 <!--
  ```diff
 - text in red
